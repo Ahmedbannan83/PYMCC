@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pymcc"
+dynamic = ["version"]
+description = "Module that reads mephisto mcc files from watertank scans or array files"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = ["pylinac>=3.0.0",
+				"pandas",
+				]
+
+[project.urls]
+repository = "https://github.com/tbezo/pymcc"
+
+[project.license]
+text = "MIT"
+
+[tool.setuptools.dynamic]
+version = {attr = "pymcc.__version__"}
