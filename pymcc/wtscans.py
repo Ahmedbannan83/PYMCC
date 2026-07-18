@@ -17,7 +17,10 @@ class PDD:
     Calculate the field parameters asked for in DIN6847-5
     """
     
-    def __init__(self, mod: str, curve_type: str, datafr: pd.DataFrame()) -> None:
+    def __init__(self, mod: str, curve_type: str, datafr: pd.DataFrame(),
+                 measurement_date: str = "", block: str = "",
+                 energy: float = None, nominal_fs_in: float = None,
+                 nominal_fs_cr: float = None) -> None:
                  
                  # offset: float, offaxis: float,
                  # nominal_fs: float, filter: str, isocenter: float, 
@@ -26,6 +29,11 @@ class PDD:
         self.curve_type = curve_type
         self.modality = mod
         self.dataframe = datafr
+        self.measurement_date = measurement_date
+        self.block = block
+        self.energy = energy
+        self.nominal_fs_in = nominal_fs_in
+        self.nominal_fs_cr = nominal_fs_cr
         #self.isocenter = isocenter
         #self.scan_depth = scan_depth
         #self.offset = offset
@@ -347,6 +355,18 @@ class PDD:
             Electrons).
 
         """
+        metadata = {
+            "Dmax (mm)": self.depth_max(),
+            "Measurement Date": self.measurement_date,
+            "Block": self.block,
+            "Energy (MV)": self.energy,
+            "Nominal Field Size (mm)": (
+                f"{self.nominal_fs_in:g} x {self.nominal_fs_cr:g}"
+                if self.nominal_fs_in is not None and self.nominal_fs_cr is not None
+                else ""
+            ),
+        }
+
         if self.modality == "EL":
             results = {
                 "Type": self.curve_type,
@@ -366,7 +386,7 @@ class PDD:
         else:
             results = {}
         
-        
+        results.update(metadata)
         return results    
     
     
