@@ -31,6 +31,9 @@ def read_file(filepath: str) -> Union[list, STARCHECK, STARCHECKMAXI, OCT729, OC
     ssd = 900.0
     filter = "FF"
     modality = "X"
+    measurement_date = ""
+    block = ""
+    energy = None
 
     # list of mcc data objects
     data_obj = []
@@ -55,6 +58,14 @@ def read_file(filepath: str) -> Union[list, STARCHECK, STARCHECKMAXI, OCT729, OC
             # elektrons or photons?
             if line.split('=')[0] == "MODALITY":
                 modality = line.split('=')[1]
+
+            # scan metadata
+            if line.split('=')[0] == "MEAS_DATE":
+                measurement_date = line.split('=', 1)[1]
+            if line.split('=')[0] == "BLOCK":
+                block = line.split('=', 1)[1]
+            if line.split('=')[0] == "ENERGY":
+                energy = float(line.split('=', 1)[1])
 
             # get field offset information
             if line.split('=')[0] == "COLL_OFFSET_INPLANE":
@@ -113,8 +124,10 @@ def read_file(filepath: str) -> Union[list, STARCHECK, STARCHECKMAXI, OCT729, OC
                 
                 if data_type == "PDD":
                     data = conv_data(lines)
-                    data_obj.append(PDD(modality, data_type, data))
-                    # removed: offset, nominal_fs, filter, isocenter, ssd, scan_depth
+                    data_obj.append(PDD(
+                        modality, data_type, data, measurement_date, block,
+                        energy, nominal_fs_in, nominal_fs_cr
+                    ))
                     lines = [] # empty line buffer
 
             elif copy:
