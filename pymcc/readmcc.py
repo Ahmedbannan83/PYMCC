@@ -34,6 +34,7 @@ def read_file(filepath: str) -> Union[list, STARCHECK, STARCHECKMAXI, OCT729, OC
     measurement_date = ""
     block = ""
     energy = None
+    ref_field_inplane = None
 
     # list of mcc data objects
     data_obj = []
@@ -66,6 +67,8 @@ def read_file(filepath: str) -> Union[list, STARCHECK, STARCHECKMAXI, OCT729, OC
                 block = line.split('=', 1)[1]
             if line.split('=')[0] == "ENERGY":
                 energy = float(line.split('=', 1)[1])
+            if line.split('=')[0] == "REF_FIELD_INPLANE":
+                ref_field_inplane = float(line.split('=', 1)[1])
 
             # get field offset information
             if line.split('=')[0] == "COLL_OFFSET_INPLANE":
@@ -126,7 +129,7 @@ def read_file(filepath: str) -> Union[list, STARCHECK, STARCHECKMAXI, OCT729, OC
                     data = conv_data(lines)
                     data_obj.append(PDD(
                         modality, data_type, data, measurement_date, block,
-                        energy, nominal_fs_in, nominal_fs_cr
+                        energy, nominal_fs_in, nominal_fs_cr, ref_field_inplane
                     ))
                     lines = [] # empty line buffer
 
